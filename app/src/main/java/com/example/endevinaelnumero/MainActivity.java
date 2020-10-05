@@ -14,6 +14,9 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
+    // randomNum -- Numero aleatorio de entre 1 y 100
+    // attempts -- Contador de intentos
+    
     int randomNum = (int) (Math.random() * (100 - 1)) + 1;
     int attempts = 0;
 
@@ -21,26 +24,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // randomNum -- Numero aleatorio de entre 1 y 100
-
-
-
+        
         // textView -- Texto, titulo del juego.
-
         final TextView titleTextView = findViewById(R.id.textView);
 
         // textEditNumber
         // Aqui se crea el campo donde sera introducido el numero, al ser editTextNumber, solo aceptara
         // numeros por defecto. Mostrara un teclado con layout numero tambien.
-
         final EditText textNumber = findViewById(R.id.editTextNumber);
         textNumber.getText();
 
         // Botón para salir
         // Aparecera una vez se acierte el numero y si es pulsado
         // la aplicacion se cierra
-
         final Button btExit = findViewById(R.id.btExit);
         btExit.setVisibility(View.GONE);
 
@@ -50,12 +46,11 @@ public class MainActivity extends AppCompatActivity {
                 System.exit(0);
             }
         });
-
+        
         // Botón para reiniciar la partida.
         // AParecera una vez se acierte el numero y preguntará al jugador si quiere
         // volver a jugar, esto hara que se establezca un nuevo numero aleatorio y el
         // jugador tendrá que volver a acertar.
-
         final Button btReset = findViewById(R.id.btReset);
         btReset.setVisibility(View.GONE);
 
@@ -63,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 randomNum = (int) (Math.random() * (100 - 1)) + 1;
                 attempts = 0;
+                titleTextView.setText("Endevia el numero!");
                 textNumber.getText().clear();
                 btReset.setVisibility(View.GONE);
                 btExit.setVisibility(View.GONE);
@@ -78,11 +74,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Si el numero es mayor o menor a randomNum, este mostrara otro Toast dependiendo si es mayor
         // o menor, ademas borrará el valor introducido y lo dejara vació listo para introducir otro numero
-
-
         final Button button = findViewById(R.id.button01);
-
-
+        
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 int numero = Integer.parseInt(textNumber.getText().toString());
@@ -118,6 +111,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // KeyListener para detectar cuando la tecla ENTER es presionada, si esta es presionada
+        // escondera el teclado numerico y dará la orden de pulsar el botón.     
         textNumber.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View view, int keyCode, KeyEvent keyevent) {
                 if ((keyevent.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER) || (keyCode == KeyEvent.FLAG_EDITOR_ACTION)) {
