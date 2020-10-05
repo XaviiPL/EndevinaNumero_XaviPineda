@@ -6,7 +6,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,6 +14,9 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
+    int randomNum = (int) (Math.random() * (100 - 1)) + 1;
+    int attempts = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,9 +24,9 @@ public class MainActivity extends AppCompatActivity {
 
         // randomNum -- Numero aleatorio de entre 1 y 100
 
-        final int randomNum = (int) (Math.random() * (100 - 1)) + 1;
 
-        // textView -- Texto, titulo del juego.d
+
+        // textView -- Texto, titulo del juego.
 
         final TextView titleTextView = findViewById(R.id.textView);
 
@@ -34,6 +36,39 @@ public class MainActivity extends AppCompatActivity {
 
         final EditText textNumber = findViewById(R.id.editTextNumber);
         textNumber.getText();
+
+        // Botón para salir
+        // Aparecera una vez se acierte el numero y si es pulsado
+        // la aplicacion se cierra
+
+        final Button btExit = findViewById(R.id.btExit);
+        btExit.setVisibility(View.GONE);
+
+        btExit.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                finish();
+                System.exit(0);
+            }
+        });
+
+        // Botón para reiniciar la partida.
+        // AParecera una vez se acierte el numero y preguntará al jugador si quiere
+        // volver a jugar, esto hara que se establezca un nuevo numero aleatorio y el
+        // jugador tendrá que volver a acertar.
+
+        final Button btReset = findViewById(R.id.btReset);
+        btReset.setVisibility(View.GONE);
+
+        btReset.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                randomNum = (int) (Math.random() * (100 - 1)) + 1;
+                attempts = 0;
+                textNumber.getText().clear();
+                btReset.setVisibility(View.GONE);
+                btExit.setVisibility(View.GONE);
+            }
+        });
+
 
         // Botón para enviar el numero.
         // Transforma el numero introducido en el editText (String)
@@ -46,6 +81,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         final Button button = findViewById(R.id.button01);
+
+
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 int numero = Integer.parseInt(textNumber.getText().toString());
@@ -57,18 +94,24 @@ public class MainActivity extends AppCompatActivity {
                     CharSequence text = "SI! Enhorabuena";
                     Toast toast = Toast.makeText(context, text, duration);
                     toast.show();
-                    titleTextView.setText("SI! Enhorabuena");
+                    titleTextView.setText("¡Acertaste! Intentos = "+attempts);
+                    btReset.setVisibility(View.VISIBLE);
+                    btExit.setVisibility(View.VISIBLE);
+
+
                 }else{
                     if (numero > randomNum){
                         CharSequence text = "Te has pasado...";
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
+                        attempts++;
                         textNumber.getText().clear();
                     }
                     if (numero < randomNum){
                         CharSequence text = "Te has quedado corto...";
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
+                        attempts++;
                         textNumber.getText().clear();
                     }
                 }
@@ -77,11 +120,11 @@ public class MainActivity extends AppCompatActivity {
 
         textNumber.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View view, int keyCode, KeyEvent keyevent) {
-                if ((keyevent.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                if ((keyevent.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER) || (keyCode == KeyEvent.FLAG_EDITOR_ACTION)) {
+                    button.performClick();
                     InputMethodManager imm = (InputMethodManager)
                             getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                    button.performClick();
                     return true;
                 }
                 return false;
